@@ -28,10 +28,8 @@ saeryme1 = function(formula, t, area, w, data, ME=TRUE){
     "(1|", w, ")"
   )
   
-  # A. REML --------------------------------------------------------------------
+  # A. Estimate Variance Component using REML --------------------------------------------------------------------
   Model1<-lmer(formula_full,df)
-  
-  #Sum1<-summary(Model1)
   Ragam1<-as.data.frame(VarCorr(Model1))
   Sigma_w<-Ragam1$sdcor[1]; Sigma2_w<-Sigma_w^2
   Sigma_v<-Ragam1$sdcor[2]; Sigma2_v<-Sigma_v^2
@@ -69,16 +67,12 @@ saeryme1 = function(formula, t, area, w, data, ME=TRUE){
   I_m<-diag(m)
   I_T<-diag(T_)
   
-  baris.t<-matrix(rep(1:T_, times=T_), nrow=T_, ncol=T_)
-  kolom.t <- t(baris.t)
-  abs.jk <- abs(baris.t - kolom.t)
-  
-  Gamma_u<-Rho^(abs.jk)/(1 - Rho^2) #4.4
-  Ragam_u<-Sigma2_eps*Gamma_u #4.3
-  Ragam_Uit<-Sigma2_eps/(1-Rho^2) #4.19
+  Gamma_u<-outer(1:T_, 1:T_, FUN=function(x,y) Rho^abs(x-y))/(1 - Rho^2) #Equation 4.4
+  Ragam_u<-Sigma2_eps*Gamma_u #Equation 4.3
+  Ragam_Uit<-Sigma2_eps/(1-Rho^2) #Equation 4.19
   
   
-  # D. Estimate alpha cap ---------------------------------------------------
+  # D-E. Estimate alpha cap and calculate random variable with measurement error---------------------------------------------------
   Area_gab<-as.matrix(c(rep(1:m,ni1),rep(1:m,ni2)))
   mean_area=df %>% group_by(!!as.symbol(area)) %>% summarise_all(mean) %>% select(-t)
   
@@ -128,11 +122,13 @@ saeryme1 = function(formula, t, area, w, data, ME=TRUE){
     
     w_i<-as.matrix(cbind(w_bar_i))
     
+    # h -> 4.21
     v_i_1<-y_area-X_area%*%Beta-as.matrix(cbind(w_i*Alpha))
     v_i_2<-cbind(Sigma2_v/(Sigma2_v+Alpha^2*Sigma2_w+(Sigma2_e/ni)+Sigma2_eps))
     v_i<-diag(c(v_i_2))%*%v_i_1
     v_i.rep<-rep(c(v_i,v_i),n_gab)
     
+    # i -> 4.23
     u_i_1<-y_area-X_area%*%Beta-as.matrix(cbind(w_i*Alpha))
     u_i_2<-cbind(Sigma2_eps/(Sigma2_v+Alpha^2*Sigma2_w+(Sigma2_e/ni)+Sigma2_eps))
     u_i<-diag(c(u_i_2))%*%u_i_1
