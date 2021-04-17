@@ -188,6 +188,7 @@ saeryme1 = function(formula, t, area, w, data, ME=TRUE){
 dt_test=import("Data_2 - test.xlsx") %>% mutate(your_x2=scale(your_x2))
 colnames(dt_test)
 
+# Application without Measurement Error
 out=saeryme1(
   formula = your_y_star~your_x1+your_x2,
   t = ~your_t,
@@ -201,7 +202,7 @@ out$est
 out$REML
 out$beta
 
-
+# Application with Measurement Error
 out_ME=saeryme1(
   formula = your_y_star~your_x1+your_x2,
   t = ~your_t,
