@@ -1,4 +1,4 @@
-
+Data_2= import("Data_2.xlsx") %>% mutate(x2=scale(x2))
 # Awal Fungsi -------------------------------------------------------------
 library(lme4)
 NmArea<-Data_2[1]

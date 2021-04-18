@@ -11,8 +11,19 @@ w=~w
 area = ~Area
 
 
+# tes fungsi --------------------------------------------------------------
+mse=msesaemear1(
+  formula = y_star~x1+x2,
+  t = ~t,
+  area = ~Area,
+  w = ~w,
+  data = data, 
+  ME = T,
+  B=10
+)
+mse
 # fungsi ------------------------------------------------------------------
-msesaemear1 = function(formula, t, area, w, data, ME=TRUE){
+msesaemear1 = function(formula, t, area, w, data, ME=TRUE, B=100){
   # Constants ----------------------------------------------------------------
   T_<-2
   
@@ -97,7 +108,6 @@ msesaemear1 = function(formula, t, area, w, data, ME=TRUE){
   X2_bar_i=mean_area %>% pull(x1)
   w_bar_i = mean_area %>% pull(w)
   
-  B<-1000
   dtsample1b <- list()
   Hasil_y_bar_i_duga_btg<-NULL;
   Hasil_y_bar_i_duga_btg_fix<-NULL
@@ -111,18 +121,19 @@ msesaemear1 = function(formula, t, area, w, data, ME=TRUE){
     # Membuat versi bootstrap dari target parameter ---------------------------
     vi_bintang_bs<-rnorm(m,0,Sigma_v)
     ui_bintang_bs<-rnorm(m,0,Ragam_Uit)
-    Alpha.mu_w_area<-as.matrix(cbind(rep(out_me$Alpha.mu_w,m)))  #####Alpha.mu
+    Alpha.mu_w_area<-as.matrix(cbind(rep(out_me$Alpha.mu_w,m)))  
     Satu_area<-as.matrix(cbind(rep(1,m)))
     
-    X_area_bs<-as.matrix(cbind(Satu_area,X1_bar_i,X2_bar_i)) #untuk me
-    X_area_bs_fix<-as.matrix(cbind(Satu_area,X1_bar_i,X2_bar_i,w_bar_i)) #untuk non me
+    X_area_bs<-as.matrix(cbind(Satu_area,X1_bar_i,X2_bar_i)) #me
+    X_area_bs_fix<-as.matrix(cbind(Satu_area,X1_bar_i,X2_bar_i,w_bar_i)) #non me
     
     y_bar_i_duga_btg_l<-X_area_bs%*%Beta+Alpha.mu_w_area+vi_bintang_bs+ui_bintang_bs #untuk me
-    y_bar_i_duga_btg_l_fix<-X_area_bs_fix%*%Beta_fix+vi_bintang_bs+ui_bintang_bs  #untuk non me
-    
     y_bar_i_duga_btg<-exp(y_bar_i_duga_btg_l)*exp(0.5*out_me$Ragam_y_vi_ui)
-    Hasil_y_bar_i_duga_btg<-cbind(Hasil_y_bar_i_duga_btg,y_bar_i_duga_btg)
+    
+    y_bar_i_duga_btg_l_fix<-X_area_bs_fix%*%Beta_fix+vi_bintang_bs+ui_bintang_bs  #untuk non me
     y_bar_i_duga_btg_fix<-exp(y_bar_i_duga_btg_l_fix)*exp(0.5*out_nme$Ragam_y_vi_ui_fix)
+    
+    Hasil_y_bar_i_duga_btg<-cbind(Hasil_y_bar_i_duga_btg,y_bar_i_duga_btg)
     Hasil_y_bar_i_duga_btg_fix<-cbind(Hasil_y_bar_i_duga_btg_fix,y_bar_i_duga_btg_fix)
     
 
@@ -200,19 +211,24 @@ msesaemear1 = function(formula, t, area, w, data, ME=TRUE){
   cv_SAE_AR1<-(rmse_SAE_AR1/Rata2_Penduga_Area_SAE_AR1)*100
   mean_overall_cv_SAE_AR1<-mean(cv_SAE_AR1)
   
-  BR_SAE_AR1_ME
-  mean_overall_BR_SAE_AR1_ME
-  BR_SAE_AR1
-  mean_overall_BR_SAE_AR1
-  rmse_SAE_AR1_ME
-  rmse_SAE_AR1
-  mean_overall_rmse_SAE_AR1_ME
-  mean_overall_rmse_SAE_AR1
-  cv_SAE_AR1_ME
-  cv_SAE_AR1
-  mean_overall_cv_SAE_AR1_ME
-  mean_overall_cv_SAE_AR1
+  result = list()
+  result$BR$BR_SAE_AR1_ME = BR_SAE_AR1_ME
+  result$BR$BR_SAE_AR1 = BR_SAE_AR1
+  result$mse$mse.SAE_AR1_ME = mse.hasil_SAE_AR1_ME
+  result$mse$mse.SAE_AR1 = mse.hasil_SAE_AR1
+  result$rmse$rmse_SAE_AR1_ME=rmse_SAE_AR1_ME
+  result$rmse$rmse_SAE_AR1=rmse_SAE_AR1
+  result$cv$cv_SAE_AR1_ME = cv_SAE_AR1_ME
+  result$cv$cv_SAE_AR1 = cv_SAE_AR1
   
+  result$mean$mean_overall_BR_SAE_AR1_ME=mean_overall_BR_SAE_AR1_ME
+  result$mean$mean_overall_BR_SAE_AR1=mean_overall_BR_SAE_AR1
+  result$mean$mean_overall_rmse_SAE_AR1_ME=mean_overall_rmse_SAE_AR1_ME
+  result$mean$mean_overall_rmse_SAE_AR1=mean_overall_rmse_SAE_AR1
+  result$mean$mean_overall_cv_SAE_AR1_ME=mean_overall_cv_SAE_AR1_ME
+  result$mean$mean_overall_cv_SAE_AR1=mean_overall_cv_SAE_AR1
+  
+  return(result)
 }
 
 
