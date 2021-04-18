@@ -1,3 +1,6 @@
+
+# Awal Fungsi -------------------------------------------------------------
+library(lme4)
 NmArea<-Data_2[1]
 NmUnit<-Data_2[2]
 Area<-Data_2[3]
@@ -233,10 +236,11 @@ N_penduduk<-sum(N_penduduk_i)
 Y_Prov<-sum(y_i_duga*N_penduduk_i)/N_penduduk
 Y_Prov_fix<-sum(y_i_duga_fix*N_penduduk_i)/N_penduduk
 
-###MELAKUKAN PENDUGAAN MSE (mse)###
+# MELAKUKAN PENDUGAAN MSE (mse) -------------------------------------------
+
 
 #Bangkitkan data contoh bootstrap
-vi_bintang<-rnorm(27,0,Sigma_v)
+vi_bintang<-rnorm(27,0,Sigma_v) # vi_bintang<-rnorm(m,0,Sigma_v)
 vij_bintang<-as.matrix(cbind(rep(vi_bintang,ni)))
 wi_bintang<-rnorm(27,w_bar,Sigma_w)
 witj_bintang<-rep(c(wi_bintang,wi_bintang),n_gab)
@@ -268,8 +272,8 @@ for(k in 1:B){
   Hasil_y_bar_i_duga_btg_fix<-cbind(Hasil_y_bar_i_duga_btg_fix,y_bar_i_duga_btg_fix)
   
   #Membuat versi bootstrap dari EBLUP#
-  Data_2<-data.frame(Area,yitj_bintang,t_,X1_itj,X2_itj,witj_bintang)
-  Model3<-lmer(y_star~x1+x2+(1|t)+(1|Area)+(1|witj_bintang),Data_2)
+  Data_2<-data.frame(Area,yitj_bintang,t_,X1_itj,X2_itj,witj_bintang) ####
+  Model3<-lmer(y_star~x1+x2+(1|t)+(1|Area)+(1|witj_bintang),Data_2)  ####
   Sum3<-summary(Model3)
   Hasil_Ragam2<-VarCorr(Model3)
   Ragam2<-as.data.frame(Hasil_Ragam2)
@@ -431,3 +435,4 @@ cv_SAE_AR1_ME
 cv_SAE_AR1
 mean_overall_cv_SAE_AR1_ME
 mean_overall_cv_SAE_AR1
+

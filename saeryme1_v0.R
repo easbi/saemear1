@@ -73,7 +73,7 @@ saeryme1 = function(formula, t, area, w, data, ME=TRUE){
   
   
   # D-E. Estimate alpha cap and calculate random variable with measurement error---------------------------------------------------
-  Area_gab<-as.matrix(c(rep(1:m,ni1),rep(1:m,ni2)))
+  Area_gab<-as.matrix(c(rep(1:m,ni1),rep(1:m,ni2))) #?
   mean_area=df %>% group_by(!!as.symbol(area)) %>% summarise_all(mean) %>% select(-t)
   
   y_bar_i = mean_area %>% pull(y)
@@ -148,6 +148,8 @@ saeryme1 = function(formula, t, area, w, data, ME=TRUE){
     res$est=est
     res$REML=Model1
     res$beta=Beta
+    res$Alpha.mu_w = Alpha.mu_w
+    res$Ragam_y_vi_ui = Ragam_y_vi_ui
   }else{
     V1_fix<-Sigma2_v*J_n1 + Sigma2_eps*(kronecker(Gamma_u,J_n1t)) + Sigma2_e*I_n1
     V_fix<-diag(V1_fix[1],nrow=n,ncol=n)
@@ -181,7 +183,16 @@ saeryme1 = function(formula, t, area, w, data, ME=TRUE){
     res$est=est_fix
     res$REML=Model1
     res$beta=Beta_fix
+    res$Ragam_y_vi_ui_fix= Ragam_y_vi_ui_fix
   }
+  res$Sigma2_v = Sigma2_v
+  res$Sigma2_w = Sigma2_w
+  res$Sigma2_e = Sigma2_e
+  res$Sigma2_eps = Sigma2_eps
+  res$Alpha = Alpha
+  
+  res$Ragam_Uit = Ragam_Uit
+  res$w_bar = w_bar
   return(res)
 }
 
