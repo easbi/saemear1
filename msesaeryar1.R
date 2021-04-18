@@ -151,10 +151,9 @@ msesaemear1 = function(formula, t, area, w, data, ME=TRUE){
       data = Data_2, 
       ME = F
     )
-    y_bar_i_bintang_duga_h_l<-X_area_boost%*%Beta_boost+Alpha.mu_w_rep_boost_area+v_i_boost+ui_boost
-    y_bar_i_bintang_duga_h_l_fix<-X_area_boost_fix%*%Beta_boost_fix+v_i_boost_fix+ui_boost_fix
-    y_bar_i_bintang_duga_h<-exp(y_bar_i_bintang_duga_h_l)*exp(0.5*Ragam_y_vi_ui_boost)
-    y_bar_i_bintang_duga_h_fix<-exp(y_bar_i_bintang_duga_h_l_fix)*exp(0.5*Ragam_y_vi_ui_boost_fix)
+    
+    y_bar_i_bintang_duga_h<-out_me_boost$est$est
+    y_bar_i_bintang_duga_h_fix<-out_nme_boost$est$est
     
     Bias_SAE_AR1_ME<-y_bar_i_bintang_duga_h-y_bar_i_duga_btg
     Bias_Relatif_SAE_AR1_ME<-Bias_SAE_AR1_ME/y_bar_i_duga_btg
