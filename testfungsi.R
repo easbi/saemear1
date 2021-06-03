@@ -1,14 +1,14 @@
 # tes fungsi penduga y ----------------------------------------------------
 
-dt_test=import("Data_2 - test.xlsx") %>% mutate(your_x2=scale(your_x2))
+dt_test=import("Data_2.xlsx") %>% mutate(x2=scale(x2))
 colnames(dt_test)
 
 # Application without Measurement Error
 out=saeryme1(
-  formula = your_y_star~your_x1+your_x2,
-  t = ~your_t,
-  area = ~your_Area,
-  w = ~your_w,
+  formula = y_star~x1+x2,
+  t = ~t,
+  area = ~Area,
+  w = ~w,
   data = dt_test, 
   ME = F
 )
